@@ -11,156 +11,112 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const TextFieldPage(),
+      home: const MainPage(),
     );
   }
 }
 
-class TextFieldPage extends StatefulWidget {
-  const TextFieldPage({super.key});
+class MainPage extends StatefulWidget {
+  const MainPage({super.key});
 
   @override
-  State<TextFieldPage> createState() => _TextFieldPageState();
+  State<MainPage> createState() => _MainPageState();
 }
 
-class _TextFieldPageState extends State<TextFieldPage> {
+class _MainPageState extends State<MainPage> {
+  int _currentIndex = 0;
+
   final TextEditingController _controller1 = TextEditingController();
   final TextEditingController _controller2 = TextEditingController();
 
-  void _login() {
+  void _copyText() {
     setState(() {
       _controller2.text = _controller1.text;
     });
   }
 
-  void _navigate() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => TowPage(name: _controller1.text)),
-    );
-  }
-
-  void _navigate1() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => TowPage1(name: _controller1.text),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Home Page'),
-        backgroundColor: Colors.blueGrey,
-      ),
-      body: Padding(
+    List<Widget> pages = [
+      // الصفحة الرئيسية
+      Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            const SizedBox(height: 20),
-
             TextField(
               controller: _controller1,
               decoration: InputDecoration(
-                labelText: 'Enter the Name',
-                hintText: 'ahmed',
+                labelText: "Enter Text",
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
+                  borderRadius: BorderRadius.circular(20),
                 ),
               ),
             ),
-
             const SizedBox(height: 20),
-
             TextField(
               controller: _controller2,
               readOnly: true,
               decoration: InputDecoration(
-                labelText: 'The Name',
+                labelText: "Output",
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
+                  borderRadius: BorderRadius.circular(20),
                 ),
               ),
             ),
-
             const SizedBox(height: 20),
-
             ElevatedButton(
+              onPressed: _copyText,
               style: ElevatedButton.styleFrom(backgroundColor: Colors.blueGrey),
-              onPressed: _login,
-              child: const Text('Submit'),
-            ),
-
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.blueGrey),
-              onPressed: _navigate,
-              child: const Text('Navigate'),
-            ),
-
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.blueGrey),
-              onPressed: _navigate1,
-              child: const Text('Navigate 1'),
+              child: const Text("Print Value"),
             ),
           ],
         ),
       ),
-    );
-  }
-}
 
-class TowPage extends StatelessWidget {
-  final String name;
+      // صفحة البحث
+      ListView(
+        children: const [
+          ListTile(title: Text("Item 1"), leading: Icon(Icons.search)),
+          ListTile(title: Text("Item 2"), leading: Icon(Icons.search)),
+          ListTile(title: Text("Item 3"), leading: Icon(Icons.search)),
+          ListTile(title: Text("Item 4"), leading: Icon(Icons.search)),
+        ],
+      ),
 
-  const TowPage({super.key, required this.name});
+      // صفحة الإعدادات
+      const Center(
+        child: Text("Settings Page", style: TextStyle(fontSize: 24)),
+      ),
 
-  @override
-  Widget build(BuildContext context) {
+      // صفحة الحساب
+      const Center(child: Text("Account Page", style: TextStyle(fontSize: 24))),
+    ];
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Tow Page'),
         backgroundColor: Colors.blueGrey,
+        title: const Text("Bottom Navigation App"),
       ),
-      body: Center(child: Text(name, style: const TextStyle(fontSize: 24))),
-    );
-  }
-}
 
-class TowPage1 extends StatefulWidget {
-  final String name;
+      body: pages[_currentIndex],
 
-  const TowPage1({super.key, required this.name});
-
-  @override
-  State<TowPage1> createState() => _TowPage1State();
-}
-
-class _TowPage1State extends State<TowPage1> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Tow Page 1'),
-        backgroundColor: Colors.blueGrey,
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(widget.name, style: const TextStyle(fontSize: 24)),
-
-          const SizedBox(height: 10),
-          const Text('data'),
-
-          const SizedBox(height: 20),
-
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.blueGrey),
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Back'),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        selectedItemColor: Colors.blueGrey,
+        unselectedItemColor: Colors.grey,
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+          BottomNavigationBarItem(icon: Icon(Icons.search), label: "Search"),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: "Settings",
           ),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Account"),
         ],
       ),
     );
